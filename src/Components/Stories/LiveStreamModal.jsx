@@ -99,7 +99,7 @@ const LiveStreamModal = ({ liveStream, onClose, isHost }) => {
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const backendHost = process.env.NODE_ENV === 'development' ? 'localhost:8000' : window.location.host;
+    const backendHost = process.env.NODE_ENV === 'development' ? 'https://snapfyimg-676661542025.asia-south1.run.app/' : window.location.host;
     const wsUrl = `${protocol}//${backendHost}/ws/live/${liveStream.id}/?token=${encodeURIComponent(accessToken)}`;
     console.log('Attempting WebSocket connection to:', wsUrl);
 

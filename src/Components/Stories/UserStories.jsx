@@ -1061,7 +1061,7 @@ const UserStories = () => {
         wsUrl = `ws://${window.location.hostname}:8000/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       } else {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        wsUrl = `${protocol}//${window.location.host}/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
+        wsUrl = `${protocol}//https://snapfyimg-676661542025.asia-south1.run.app/api/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       }
       
       console.log('Connecting to WebSocket:', wsUrl);

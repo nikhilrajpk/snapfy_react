@@ -289,7 +289,7 @@ function Message() {
         socketRef.current.close();
       }
 
-      socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/user/chat/?token=${accessToken}`);
+      socketRef.current = new WebSocket(`wss://https://snapfyimg-676661542025.asia-south1.run.app/ws/user/chat/?token=${accessToken}`);
 
       socketRef.current.onopen = () => {
         console.log('WebSocket connected');
