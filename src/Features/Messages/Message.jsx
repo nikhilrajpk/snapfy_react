@@ -289,7 +289,7 @@ function Message() {
         socketRef.current.close();
       }
 
-      const backendHost = 'snapfyimg-676661542025.asia-south1.run.app';
+      const backendHost = 'snapfy-backend-676661542025.asia-south1.run.app';
       socketRef.current = new WebSocket(`wss://${backendHost}/ws/user/chat/?token=${accessToken}`);
 
       socketRef.current.onopen = () => {
