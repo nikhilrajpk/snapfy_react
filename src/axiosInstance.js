@@ -5,7 +5,7 @@ import { logout } from './redux/slices/userSlice';
 import { showToast } from './redux/slices/toastSlice';
 
 // Use environment variable for API URL, fallback to Cloud Run URL
-const API_URL = import.meta.env.VITE_API_URL || 'https://snapfy-backend-676661542025.asia-south1.run.app';
+const API_URL = 'https://snapfy-backend-676661542025.asia-south1.run.app/api/'
 
 const axiosInstance = axios.create({
   baseURL: `${API_URL}/api/`,
