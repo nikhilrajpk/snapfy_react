@@ -98,7 +98,7 @@ const LiveStreamModal = ({ liveStream, onClose, isHost }) => {
       return;
     }
 
-    const backendHost = 'snapfy-backend-676661542025.asia-south1.run.app'; 
+    const backendHost = 'snapfyimg-676661542025.asia-south1.run.app'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${backendHost}/ws/live/${liveStream.id}/?token=${encodeURIComponent(accessToken)}`;
     console.log('Attempting WebSocket connection to:', wsUrl);

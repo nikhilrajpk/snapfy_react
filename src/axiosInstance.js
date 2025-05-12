@@ -1,24 +1,16 @@
-// axiosInstance.js
 import axios from 'axios';
 import { store } from './redux/store';
 import { logout } from './redux/slices/userSlice';
 import { showToast } from './redux/slices/toastSlice';
 
-// Use environment variable for API URL, fallback to Cloud Run URL
-const API_URL = 'https://snapfy-backend-676661542025.asia-south1.run.app/api/'
-
 const axiosInstance = axios.create({
-  baseURL: `${API_URL}/api/`,
+  baseURL: 'https://snapfyimg-676661542025.asia-south1.run.app/api/',
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Get access token from cookies
     const accessToken = document.cookie
       .split('; ')
       .find(row => row.startsWith('access_token='))
@@ -27,25 +19,9 @@ axiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
-
-    // Add CSRF token for non-GET requests
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(config.method?.toUpperCase())) {
-      const csrfToken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('csrftoken='))
-        ?.split('=')[1];
-      
-      if (csrfToken) {
-        config.headers['X-CSRFToken'] = csrfToken;
-      }
-    }
-    
     return config;
   },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Response interceptor
@@ -56,8 +32,6 @@ axiosInstance.interceptors.response.use(
 
     // Skip token refresh for logout requests
     if (originalRequest.url.includes('/logout/') || window.isLoggingOut) {
-      store.dispatch(logout());
-      window.location.href = '/';
       return Promise.reject(error);
     }
     
@@ -75,53 +49,30 @@ axiosInstance.interceptors.response.use(
           throw new Error('No refresh token available');
         }
         
-        // Refresh the token with the correct URL
+        // Refresh the token
         const response = await axios.post(
-          `${API_URL}/api/token/refresh/`,
+          'https://snapfyimg-676661542025.asia-south1.run.app/api/token/refresh/',
           { refresh: refreshToken },
-          { 
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }
+          { withCredentials: true }
         );
         
         // Update access token in cookies
-        const accessToken = response.data.access;
-        document.cookie = `access_token=${accessToken}; path=/; max-age=${3600 * 24}; SameSite=Lax; Secure`;
+        document.cookie = `access_token=${response.data.access}; path=/; max-age=${3600 * 24}; SameSite=Lax`;
         
         // Retry original request with new token
-        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${response.data.access}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
-        
-        // Clear cookies
-        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        
-        // Logout and redirect
+        // await axios.post('http://127.0.0.1:8000/api/logout/')
         // store.dispatch(logout());
-        store.dispatch(showToast({
-          message: 'Session expired. Please log in again.',
-          type: 'warning'
-        }));
-        
-        // setTimeout(() => {
-        //   window.location.href = '/';
-        // }, 1000);
-        
+        // store.dispatch(showToast({
+        //   message: 'Session expired. Please log in again.',
+        //   type: 'warning'
+        // }));
+        // window.location.href = '/';
         return Promise.reject(refreshError);
       }
-    }
-    
-    // Handle other error responses
-    if (error.response?.status >= 500) {
-      store.dispatch(showToast({
-        message: 'Server error. Please try again later.',
-        type: 'error'
-      }));
     }
     
     return Promise.reject(error);

@@ -1057,7 +1057,7 @@ const UserStories = () => {
 
       // URL construction
       let wsUrl;
-      const backendHost = 'snapfy-backend-676661542025.asia-south1.run.app';
+      const backendHost = 'snapfyimg-676661542025.asia-south1.run.app';
       if (process.env.NODE_ENV === 'development') {
         wsUrl = `ws://localhost:8000/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       } else {
