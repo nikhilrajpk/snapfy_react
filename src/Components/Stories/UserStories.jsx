@@ -1057,12 +1057,10 @@ const UserStories = () => {
 
       // URL construction
       let wsUrl;
-      const backendHost = 'snapfyimg-676661542025.asia-south1.run.app';
       if (process.env.NODE_ENV === 'development') {
         wsUrl = `ws://localhost:8000/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       } else {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        wsUrl = `${protocol}//${backendHost}/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
+        wsUrl = `wss://snapfy-backend-682457091521.us-central1.run.app/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       }
       console.log('Connecting to WebSocket:', wsUrl);
       const websocket = new WebSocket(wsUrl);

@@ -289,8 +289,15 @@ function Message() {
         socketRef.current.close();
       }
 
-      const backendHost = 'snapfyimg-676661542025.asia-south1.run.app';
-      socketRef.current = new WebSocket(`wss://${backendHost}/ws/user/chat/?token=${accessToken}`);
+
+      let wsUrl;
+      if (process.env.NODE_ENV === 'development') {
+        wsUrl = `ws://localhost:8000/ws/user/chat/?token=${encodeURIComponent(accessToken)}`;
+      } else {
+        wsUrl = `wss://snapfy-backend-682457091521.us-central1.run.app/ws/user/chat/?token=${encodeURIComponent(accessToken)}`;
+      }
+
+      socketRef.current = new WebSocket(wsUrl);
 
       socketRef.current.onopen = () => {
         console.log('WebSocket connected');
