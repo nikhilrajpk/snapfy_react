@@ -756,10 +756,7 @@ function Message() {
           console.log(`Set video track: ${track.id}`);
         });
       }
-      stream.getTracks().forEach((track) => {
-        peerConnectionRef.current.addTrack(track, stream);
-        console.log(`Added ${track.kind} track to peer connection`, track);
-      });
+      
 
       peerConnectionRef.current.onicecandidate = (event) => {
         if (event.candidate && callId) {
@@ -1010,10 +1007,7 @@ function Message() {
           console.log(`Set video track: ${track.id}`);
         });
       }
-      stream.getTracks().forEach((track) => {
-        peerConnectionRef.current.addTrack(track, stream);
-        console.log(`Added ${track.kind} track to peer connection`, track);
-      });
+      
 
       peerConnectionRef.current.onicecandidate = (event) => {
         if (event.candidate && callId) {
