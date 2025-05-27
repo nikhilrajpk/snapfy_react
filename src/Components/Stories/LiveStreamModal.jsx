@@ -102,7 +102,7 @@ const LiveStreamModal = ({ liveStream, onClose, isHost }) => {
     if (process.env.NODE_ENV === 'development') {
       wsUrl = `ws://localhost:8000/ws/live/${liveStream.id}/?token=${encodeURIComponent(accessToken)}`;
     } else {
-      wsUrl = `wss://snapfy-backend-682457091521.us-central1.run.app/ws/live/${liveStream.id}/?token=${encodeURIComponent(accessToken)}`;
+      wsUrl = `wss://snapfy-949877042975.us-central1.run.app/ws/live/${liveStream.id}/?token=${encodeURIComponent(accessToken)}`;
     }
     
     console.log('Attempting WebSocket connection to:', wsUrl);
