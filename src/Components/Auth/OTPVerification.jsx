@@ -117,10 +117,11 @@ const OTPVerification = () => {
       const response = await verifyOTP({ email, otp: otpString });
       dispatch(showToast({ message: response?.message || "OTP verified successfully!", type: "success" }));
 
-      // Clear email from store after successful verification
-      dispatch(clearEmail());
 
       navigate(forgotPassword ? '/reset-password' : '/');
+      if (!forgotPassword) {
+        dispatch(clearEmail()); // Clear email only for registration flow
+      }
     } catch (error) {
       const errorResponse = error.response?.data;
 

@@ -5,6 +5,7 @@ import {resetPassword} from '../../API/authAPI'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { showToast } from '../../redux/slices/toastSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { clearEmail } from '../../redux/slices/authSlice';
 
 import Loader from '../../utils/Loader/Loader'
 
@@ -28,6 +29,11 @@ const ResetPassword = () => {
   const password = watch('password', '');
 
   const onSubmit = async (data) => {
+    if (!email) {
+      dispatch(showToast({ message: "No email provided. Please start over.", type: "error" }));
+      navigate('/'); // Redirect to login if email is missing
+      return;
+    }
     
     try {
       setLoading(true);
@@ -36,7 +42,8 @@ const ResetPassword = () => {
   
       // Show success toast
       dispatch(showToast({message:response?.message || "Password changed successfully!", type:'success'}))
-      
+      // Clear email from Redux store
+      dispatch(clearEmail());
       // navigation to verify email 
       navigate('/')
 
