@@ -4,6 +4,7 @@ import {  X, ChevronRight, ArrowLeft} from 'lucide-react';
 import {resendOTP} from '../../API/authAPI'
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../../redux/slices/toastSlice';
+import { setEmail } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 
 import Loader from '../../utils/Loader/Loader'
@@ -28,8 +29,11 @@ const EmailInputComponent = () => {
       // Show success toast
       dispatch(showToast({message:"OTP send to email", type:'success'}))
       
-      // navigation to verify email
-      navigate(`/verify-otp?email=${encodeURIComponent(data?.email)}&forgot_password=true`)
+      // Dispatch email to Redux store
+      dispatch(setEmail({ email: data.email, forgotPassword: true }));
+
+      // Navigate to OTP verification
+      navigate('/verify-otp');
 
     } catch (error) {
         dispatch(showToast({message:"This email is not registered. Plese register!", type:'error'}))

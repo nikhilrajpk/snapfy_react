@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { showToast } from '../../redux/slices/toastSlice';
 import { verifyOTP, resendOTP } from '../../API/authAPI';
+import { clearEmail } from '../../redux/slices/authSlice';
 
 const OTPVerification = () => {
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -17,6 +18,9 @@ const OTPVerification = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
+
+  // Retrieve email and forgotPassword from Redux store
+  const { email, forgotPassword } = useSelector((state) => state.auth);
 
   // memoizing the retrieval of email
   const email = useMemo(() => searchParams.get("email"), [searchParams]);
@@ -98,68 +102,55 @@ const OTPVerification = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const otpString = otp.join('');
-    
+
     if (otpString.length !== 4) {
-      // dispatching toast action
-      dispatch(showToast({message: "Please enter all 4 digits", type: "error"}))
+      dispatch(showToast({ message: "Please enter all 4 digits", type: "error" }));
       return;
     }
 
-    // submit counter checking - 3 chances.
-    setSubmitCount((prev)=> prev + 1)
-    if (submitCount === 3){
-        // dispatching toast action
-        dispatch(showToast({message: "You have reached your submit limit!", type: "error"}))
-        if (forgot_password){
-          navigate('/')
-        }else{
-          navigate('/register')
-        }
-        return
+    setSubmitCount((prev) => prev + 1);
+    if (submitCount >= 3) {
+      dispatch(showToast({ message: "You have reached your submit limit!", type: "error" }));
+      dispatch(clearEmail()); // Clear email from store
+      navigate(forgotPassword ? '/' : '/register');
+      return;
     }
 
     setLoading(true);
     try {
-      const response = await verifyOTP({"email":email, "otp":otpString})
-      // dispatching toast action
-      dispatch(showToast({message: response?.message || "OTP verified successfully!", type: "success"}))
+      const response = await verifyOTP({ email, otp: otpString });
+      dispatch(showToast({ message: response?.message || "OTP verified successfully!", type: "success" }));
 
-      if(forgot_password){
-        navigate(`/reset-password?email=${encodeURIComponent(email)}`) 
-      }else{
-        navigate('/');
-      }
-      
+      // Clear email from store after successful verification
+      dispatch(clearEmail());
+
+      navigate(forgotPassword ? '/reset-password' : '/');
     } catch (error) {
-        const errorResponse = error.response?.data;
+      const errorResponse = error.response?.data;
 
-        if (errorResponse) {
-            let errorMessage = "";
-            
-            // Handle different formats of error responses
-            if (typeof errorResponse === 'string') {
-            // If response is just a string
-            errorMessage = errorResponse;
-            } else if (errorResponse.detail) {
-            // DRF often puts a single error in a 'detail' field
-            errorMessage = errorResponse.detail;
-            } else if (typeof errorResponse === 'object') {
-            // Handle object with field-level errors
-            errorMessage = Object.entries(errorResponse).map(([field, messages]) => {
-                if (Array.isArray(messages)) {
+      if (errorResponse) {
+        let errorMessage = "";
+        if (typeof errorResponse === 'string') {
+          errorMessage = errorResponse;
+        } else if (errorResponse.detail) {
+          errorMessage = errorResponse.detail;
+        } else if (typeof errorResponse === 'object') {
+          errorMessage = Object.entries(errorResponse)
+            .map(([field, messages]) => {
+              if (Array.isArray(messages)) {
                 return `${field}: ${messages.join(", ")}`;
-                } else if (typeof messages === 'string') {
+              } else if (typeof messages === 'string') {
                 return `${field}: ${messages}`;
-                } else {
+              } else {
                 return `${field}: Invalid format`;
-                }
-            }).join("\n");
-            }
-            
-            dispatch(showToast({message: errorMessage || "Verification failed", type: "error"}))
-        } else {
-            dispatch(showToast({message: "An unexpected error occured", type: "error"}))
+              }
+            })
+            .join("\n");
         }
+        dispatch(showToast({ message: errorMessage || "Verification failed", type: "error" }));
+      } else {
+        dispatch(showToast({ message: "An unexpected error occurred", type: "error" }));
+      }
     } finally {
       setLoading(false);
     }
@@ -241,7 +232,10 @@ const OTPVerification = () => {
 
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                dispatch(clearEmail()); 
+                navigate(-1);
+              }}
               className="w-full flex items-center justify-center text-white/70 hover:text-white transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />

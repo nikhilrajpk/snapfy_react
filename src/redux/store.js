@@ -3,6 +3,7 @@ import {thunk} from 'redux-thunk';
 import userReducer from './slices/userSlice';
 import toastReducer from './slices/toastSlice';
 import callReducer from './slices/callSlice'
+import authReducer from './slices/authSlice'
 
 // Load state from localStorage
 const loadState = () => {
@@ -45,6 +46,7 @@ export const store = configureStore({
     user: userReducer,
     call: callReducer,
     toast: toastReducer,
+    auth: authReducer
   },
   preloadedState: loadState(),
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),

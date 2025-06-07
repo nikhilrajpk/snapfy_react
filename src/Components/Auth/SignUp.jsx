@@ -4,6 +4,7 @@ import { Check, X, Camera, ChevronRight, Eye, EyeOff} from 'lucide-react';
 import {userRegister} from '../../API/authAPI'
 import { useNavigate, Link } from 'react-router-dom';
 import { showToast } from '../../redux/slices/toastSlice';
+import { setEmail } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 
 import Loader from '../../utils/Loader/Loader'
@@ -55,7 +56,12 @@ const SignUp = () => {
       
       // navigation to verify email
       const email = formData.get('email') 
-      navigate(`/verify-otp/?email=${encodeURIComponent(email)}`)
+
+      // Dispatch email to Redux store
+      dispatch(setEmail({ email: email, forgotPassword: false }));
+
+      // Navigate to OTP verification
+      navigate('/verify-otp');
 
     } catch (error) {
       const errorResponse = error.response?.data; // DRF returns validation errors in `data`
