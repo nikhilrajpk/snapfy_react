@@ -4,7 +4,7 @@ import { Check, X, ChevronRight, Eye, EyeOff} from 'lucide-react';
 import {resetPassword} from '../../API/authAPI'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { showToast } from '../../redux/slices/toastSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from '../../utils/Loader/Loader'
 
@@ -16,9 +16,8 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const {email} = useSelector((state)=> state.auth)
 
-  const [searchParams] = useSearchParams()
-  const email = useMemo(()=> searchParams.get("email"),[searchParams])
   const {
     register,
     handleSubmit,
