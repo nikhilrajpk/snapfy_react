@@ -1060,7 +1060,7 @@ const UserStories = () => {
       if (process.env.NODE_ENV === 'development') {
         wsUrl = `ws://localhost:8000/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       } else {
-        wsUrl = `wss://snapfy-949877042975.us-central1.run.app/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
+        wsUrl = `wss://snapfy-backend.nikhilrajpk.in/ws/live/global/?token=${encodeURIComponent(accessToken)}`;
       }
       console.log('Connecting to WebSocket:', wsUrl);
       const websocket = new WebSocket(wsUrl);
